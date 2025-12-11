@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Inventory Management{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>📦 Inventory Management</h1>
+    </div>
+
+    <section class="tools-bar">
+        <input type="text" id="inventory-search" placeholder="Search product name or ID..." onkeyup="filterTable('inventory-table', 'inventory-search')">
+        
+        <form method="POST" action="{{ url_for('import_products') }}" enctype="multipart/form-data" class="inline-form">
+            <input type="file" name="file" accept=".csv" required style="width: auto;">
+            <button type="submit" class="btn-secondary">Import (CSV)</button>
+        </form>
+        
+        <a href="{{ url_for('export_data', model_name='products') }}" class="btn-secondary">Export (CSV)</a>
+        
+        <a href="{{ url_for('add_product') }}" class="btn-checkout">+ Add New Product</a>
+    </section>
+
+    <table class="data-table inventory-table" id="inventory-table">
+        <thead>
+            <tr>
+                <th>QR Code</th>
+                <th>Photo / Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                {% for header in custom_headers %}
+                <th>{{ header | capitalize }}</th>
+                {% endfor %}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {% if product.custom_data %}
+                        <img src="data:image/png;base64,{{ product.custom_data }}" alt="QR Code" width="50" height="50">
+                        <a href="{{ url_for('download_qr', product_id=product.id) }}" 
+                           style="display: block; font-size: 0.7em; margin-top: 5px;">Download QR</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {% if product.image_path %}
+                        <img src="{{ url_for('static', filename=product.image_path) }}" width="40" style="vertical-align: middle; margin-right: 5px;">
+                    {% endif %}
+                    {{ product.name }}
+                </td>
+                <td>{{ product.price | currency }}</td>
+                <td>{{ product.stock }}</td>
+                
+                {% set custom_data = product.custom_data | from_json %}
+                {% for key in custom_headers %}
+                    <td>{{ custom_data.get(key | lower) or 'N/A' }}</td>
+                {% endfor %}
+
+                <td>
+                    <a href="{{ url_for('edit_product', product_id=product.id) }}">Edit</a> | 
+                    
+                    <form method="POST" action="{{ url_for('delete_product', product_id=product.id) }}" 
+                          style="display:inline;"
+                          onsubmit="return confirm('Are you sure you want to delete {{ product.name }}? This action cannot be undone.');">
+                        <button type="submit" style="background: none; border: none; color: var(--danger-btn); padding: 0; margin: 0; cursor: pointer; text-decoration: underline;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Generic search function for tables
+    function filterTable(tableId, inputId) {
+        const input = document.getElementById(inputId);
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById(tableId);
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName("td")[1]; 
+            if (td) {
+                const textValue = td.textContent || td.innerText;
+                if (textValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

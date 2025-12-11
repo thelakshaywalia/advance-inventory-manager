@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt #{{ transaction.id }}</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .receipt-container { width: 300px; margin: 20px auto; padding: 25px; background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 8px; }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 15px; }
+        .header h1 { margin: 0; color: #333; font-size: 1.5em; }
+        .header p { margin: 2px 0; font-size: 0.8em; color: #777; }
+        .details, .summary { margin-bottom: 15px; font-size: 0.9em; }
+        .details table, .summary table, .items table { width: 100%; border-collapse: collapse; }
+        .items th, .items td { padding: 8px 0; text-align: left; }
+        .items th { border-bottom: 1px dashed #ccc; font-weight: 600; }
+        .summary tr:last-child td { font-size: 1.2em; font-weight: bold; color: #007bff; border-top: 2px solid #333; padding-top: 10px; }
+        .footer { text-align: center; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px; }
+        .print-button { margin-top: 20px; padding: 10px 20px; cursor: pointer; }
+
+        @media print {
+            body { background: white; }
+            .receipt-container { box-shadow: none; border: none; width: 100%; margin: 0; padding: 0; }
+            .print-button { display: none; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="receipt-container">
+        <div class="header">
+            <h1>[YOUR BRAND NAME]</h1>
+            <p>123 Business Street, City, Country</p>
+            <p>Phone: [Your Contact]</p>
+            <p>-- Modern Sales Receipt --</p>
+        </div>
+
+        <div class="details">
+            <table>
+                <tr><td>Bill No:</td><td style="text-align: right;">#{{ transaction.id }}</td></tr>
+                <tr><td>Date/Time:</td><td style="text-align: right;">{{ transaction.timestamp.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+                {% if customer %}
+                <tr><td>Customer:</td><td style="text-align: right;">{{ customer.name }}</td></tr>
+                <tr><td>Phone:</td><td style="text-align: right;">{{ customer.phone }}</td></tr>
+                {% endif %}
+            </table>
+        </div>
+
+        <div class="items">
+            <table>
+                <thead>
+                    <tr><th>Item</th><th style="text-align: center;">Qty</th><th style="text-align: right;">Total</th></tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td style="text-align: center;">{{ item.qty }}</td>
+                        <td style="text-align: right;">{{ item.subtotal | currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="summary">
+            <table>
+                <tr><td>Subtotal:</td><td style="text-align: right;">{{ transaction.total_amount | currency }}</td></tr>
+                <tr><td>Tax (0%):</td><td style="text-align: right;">₹ 0.00</td></tr>
+                <tr><td>TOTAL PAID:</td><td style="text-align: right;">{{ transaction.total_amount | currency }}</td></tr>
+                <tr><td>Payment Type:</td><td style="text-align: right;">{{ transaction.status }}</td></tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Thank You for your business!</p>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="print-button" onclick="window.print()">Print Receipt</button>
+    </div>
+</body>
+</html>

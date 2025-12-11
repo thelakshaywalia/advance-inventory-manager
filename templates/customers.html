@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Customer List{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>👥 Customer Data</h1>
+    </div>
+
+    <p>
+        <a href="{{ url_for('customer_form') }}" class="btn-checkout" style="width: auto;">+ Add New Customer</a>
+    </p>
+
+    <hr style="margin: 20px 0;">
+    
+    <input type="text" id="customer-search" placeholder="Search customer by Name or Phone..." onkeyup="filterTable('customer-table', 'customer-search')" style="width: 100%; margin-bottom: 20px;">
+    
+    <h2>Existing Customers</h2>
+    
+    <table id="customer-table"> 
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>{{ customer.email or 'N/A' }}</td>
+                <td>{{ customer.address or 'N/A' }}</td>
+                <td>
+                    <a href="{{ url_for('customer_detail', customer_id=customer.id) }}">History</a> | 
+                    
+                    <a href="{{ url_for('customer_form', customer_id=customer.id) }}">Edit</a> |
+                    
+                    <form method="POST" action="{{ url_for('delete_customer', customer_id=customer.id) }}" 
+                          style="display:inline;"
+                          onsubmit="return confirm('WARNING: Deleting {{ customer.name }} will also delete all their purchase history. Are you sure?');">
+                        <button type="submit" style="background: none; border: none; color: var(--danger-btn); padding: 0; margin: 0; cursor: pointer; text-decoration: underline;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>
+        <a href="{{ url_for('export_data', model_name='customers') }}" class="btn-secondary">Export Customer Data (CSV)</a>
+    </p>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Reusable Table Filter for Customers
+    function filterTable(tableId, inputId) {
+        const input = document.getElementById(inputId);
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById(tableId);
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            // Check Name (td[0]) and Phone (td[1]) columns
+            const nameTd = tr[i].getElementsByTagName("td")[0]; 
+            const phoneTd = tr[i].getElementsByTagName("td")[1];
+            
+            let found = false;
+            if (nameTd && nameTd.textContent.toUpperCase().indexOf(filter) > -1) {
+                found = true;
+            } else if (phoneTd && phoneTd.textContent.toUpperCase().indexOf(filter) > -1) {
+                found = true;
+            }
+            
+            tr[i].style.display = found ? "" : "none";
+        }
+    }
+</script>
+{% endblock %}

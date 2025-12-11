@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>📦 {{ title }}</h1>
+    </div>
+
+    <div class="form-container">
+        <form method="POST" 
+              action="{{ url_for('edit_product', product_id=product.id) if product else url_for('add_product') }}"
+              enctype="multipart/form-data"> 
+            
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required>
+
+            <label for="price">Price (in INR):</label>
+            <input type="number" id="price" name="price" step="0.01" value="{{ product.price if product else 0.00 }}" required>
+
+            <label for="stock">Current Stock:</label>
+            <input type="number" id="stock" name="stock" value="{{ product.stock if product else 0 }}" required>
+            
+            <label for="photo">Product Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*">
+            {% if product and product.image_path %}
+                <p>Current Image: <img src="{{ url_for('static', filename=product.image_path) }}" width="50"></p>
+            {% endif %}
+
+            <h2>Additional Details</h2>
+            {% for key in ["supplier", "location", "color"] %}
+                <label for="custom_{{ key }}">{{ key | capitalize }}:</label>
+                {% set custom_data = product.custom_data | from_json if product and product.custom_data else {} %}
+                <input type="text" id="custom_{{ key }}" name="custom_{{ key }}" 
+                       value="{{ custom_data.get(key) or '' }}">
+            {% endfor %}
+
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-checkout">{{ 'Update Product' if product else 'Add Product' }}</button>
+                <a href="{{ url_for('products') }}" class="btn-secondary" style="text-decoration: none; margin-left: 10px;">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

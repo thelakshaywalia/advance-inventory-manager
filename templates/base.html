@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline POS - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        // Set theme class immediately on load from localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('index') }}">🛍️ POS Terminal</a>
+            <a href="{{ url_for('customers') }}">👥 Customer Data</a>
+            <a href="{{ url_for('products') }}">📦 Inventory</a>
+            <a href="{{ url_for('analysis') }}">📊 Business Analysis</a>
+            <a href="{{ url_for('settings') }}">⚙️ Settings</a>
+            
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}" style="float: right;">🚪 Logout ({{ current_user.username }})</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <p style="text-align: center; font-size: 0.8em; color: #6c757d; margin-top: 40px;">
+            Owner- WL Systems | &copy; 2025 Offline POS System
+        </p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

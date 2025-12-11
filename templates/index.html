@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Point of Sale (POS) Terminal{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>🛍️ New Sale</h1>
+    </div>
+
+    <div class="pos-layout">
+        <div class="product-panel">
+            <h2 style="margin-top: 0;">📦 Select Products</h2>
+            
+            <input type="text" id="qr-scan-input" 
+                   placeholder="Scan QR (e.g., POS_PRODUCT_1) or Search by Name..." 
+                   onkeyup="handleScanOrSearch(event)" style="margin-bottom: 15px;">
+            
+            <div class="product-grid" id="product-list">
+                {% for product in products %}
+                <div class="product-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" onclick="addToCart(this)">
+                    <p class="product-name" style="font-weight: 600;">{{ product.name }}</p>
+                    <p class="product-price" style="font-size: 1.1em; color: var(--success-color);">{{ product.price | currency }}</p>
+                    <small style="color: #6c757d;">Stock: {{ product.stock }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="cart-panel">
+            <h2 style="margin-top: 0;">🛒 Current Sale Summary</h2>
+            
+            <div class="customer-select">
+                <label for="customer-select">Customer:</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                    <select id="customer-select" style="flex-grow: 1;">
+                        <option value="">Walk-in Customer</option>
+                        {% for customer in all_customers %}
+                            <option value="{{ customer.id }}">{{ customer.name }} ({{ customer.phone }})</option>
+                        {% endfor %}
+                    </select>
+                    <button onclick="toggleNewCustomerForm()" class="btn-secondary" style="padding: 5px 10px; flex-shrink: 0; margin-top: 0;">+ New</button>
+                </div>
+            </div>
+
+            <div id="new-customer-form" style="display:none; padding: 10px; border: 1px dashed var(--border-color); margin-bottom: 15px; border-radius: 4px;">
+                <input type="text" id="new-cust-name" placeholder="Name" required style="width: 48%; margin: 5px 1%;">
+                <input type="text" id="new-cust-phone" placeholder="Phone" required style="width: 48%; margin: 5px 1%;">
+                <button onclick="quickAddCustomer()" class="btn-checkout" style="width: 100%; margin-top: 5px;">Save & Select Customer</button>
+            </div>
+            
+            <table class="cart-table" style="margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Item</th>
+                        <th style="width: 15%;">Qty</th>
+                        <th style="width: 25%;">Price</th>
+                        <th style="width: 20%;">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    </tbody>
+            </table>
+
+            <div class="cart-summary">
+                <p>Subtotal: <span id="subtotal"></span></p>
+                <p>Tax (0%): <span id="tax">₹ 0.00</span></p>
+                <h3 style="border-top: 2px solid var(--border-color); padding-top: 10px; margin-top: 10px;">GRAND TOTAL: <span id="grand-total"></span></h3>
+            </div>
+            
+            <div class="payment-buttons">
+                <button onclick="checkout('Cash')" class="btn-checkout">💰 Cash</button>
+                <button onclick="checkout('Card')" class="btn-checkout">💳 Card</button>
+                <button onclick="checkout('Credit')" class="btn-secondary">📜 Credit</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/pos.js') }}"></script>
+    <script>
+        function toggleNewCustomerForm() {
+            const form = document.getElementById('new-customer-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+{% endblock %}

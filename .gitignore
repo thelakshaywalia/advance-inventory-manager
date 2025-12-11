@@ -1,0 +1,25 @@
+# --- .gitignore ---
+# Environment
+venv/
+.env
+
+# Python specific files
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE/Editor specific files
+.vscode/
+
+# Flask specific files
+instance/
+database.db
+
+# PyInstaller specific files
+*.spec
+build/
+dist/
+
+# Temporary and unnecessary executables
+git
+rmdir

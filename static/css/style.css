@@ -1,0 +1,286 @@
+/* --- static/css/style.css (FINAL UI FIXES) --- */
+
+/* 1. Define Color Variables (Light Theme Default) */
+:root {
+    /* Base Colors */
+    --bg-primary: #f8f9fa; /* Very Light Gray */
+    --bg-secondary: #ffffff;
+    --text-color: #212529; /* Near Black */
+    --header-bg: #343a40; /* Dark Charcoal */
+    
+    /* Functional Colors */
+    --primary-color: #007bff; /* Blue for emphasis/links */
+    --success-color: #28a745; /* Green for success */
+    --warning-color: #ffc107; /* Yellow for secondary actions */
+    --danger-color: #dc3545; /* Red for deletion/loss */
+    
+    /* Shadows & Borders */
+    --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --border-color: #e9ecef;
+    --hover-bg: #e2e6ea; 
+    --input-bg: var(--bg-secondary); 
+}
+
+/* 2. Dark Mode Overrides (FIXED TEXT COLOR INHERITANCE) */
+.dark-mode {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-color: #e0e0e0; /* Explicitly set light text color */
+    --header-bg: #000000;
+    --border-color: #333333;
+    --card-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.5); 
+    --hover-bg: #2a2a2a;
+    --input-bg: #2a2a2a; 
+}
+
+/* 3. Global Reset, Typography, and Smoothness */
+* {
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.2s, transform 0.1s;
+    box-sizing: border-box;
+    color: inherit; 
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary); 
+    color: var(--text-color); 
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 4. Header and Navigation */
+header {
+    background-color: var(--header-bg);
+    padding: 15px 30px;
+    box-shadow: var(--card-shadow);
+}
+nav {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
+}
+nav a {
+    /* FIX: Ensure navigation links are white for readability against dark header */
+    color: white; 
+    margin-right: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    flex-shrink: 0; 
+}
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 5. Main Content and Layouts */
+main { padding: 30px; max-width: 1400px; margin: 0 auto; }
+.page-header h1 {
+    font-size: 2em;
+    margin-bottom: 25px;
+    font-weight: 300;
+}
+
+/* 6. Cards and Elements */
+.product-panel, .cart-panel, .card-metric, .settings-section, .form-container, .add-customer-form {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px; 
+}
+
+/* 7. Forms and Inputs (CRITICAL DARK MODE FIX) */
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="file"], select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg); 
+    color: var(--text-color); 
+    border-radius: 4px;
+}
+input:focus, select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+label {
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+}
+
+/* 8. Buttons */
+button, .btn-checkout, .btn-secondary, input[type="submit"] {
+    border: none;
+    padding: 10px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+.btn-checkout { background-color: var(--success-color); color: white; }
+.btn-secondary { background-color: var(--warning-color); color: black; } /* FIX: Explicitly Black Text */
+.btn-checkout:hover, .btn-secondary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-remove { background-color: var(--danger-color); color: white; padding: 5px 8px; }
+
+/* 9. Tables (CRITICAL DARK MODE FIX) */
+table {
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    background-color: var(--bg-secondary); 
+}
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+th {
+    background-color: var(--hover-bg);
+    font-weight: 600;
+}
+tr:hover {
+    background-color: var(--hover-bg);
+}
+
+/* 10. POS Layout Specifics */
+.pos-layout {
+    display: grid;
+    grid-template-columns: 3fr 1.5fr; /* Desktop layout */
+    gap: 30px;
+}
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+.product-card {
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    text-align: center;
+    padding: 15px 5px;
+    line-height: 1.3;
+    cursor: pointer;
+}
+.product-card:hover {
+    box-shadow: 0 0 0 2px var(--primary-color);
+    transform: none;
+}
+.payment-buttons { 
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 8px; 
+    margin-top: 25px; 
+}
+
+/* 11. Inventory Tools Bar FIX */
+.tools-bar {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 15px; 
+    align-items: center; 
+    margin-bottom: 25px;
+    padding: 15px; 
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+.tools-bar input[type="text"] {
+    flex-grow: 1; 
+    max-width: 300px; 
+    margin: 0; 
+}
+.tools-bar .inline-form {
+    display: flex; 
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+}
+.tools-bar button, .tools-bar a {
+    margin: 0; 
+    white-space: nowrap; 
+}
+
+/* Analysis Dashboard */
+.analysis-card-group { 
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 30px; 
+    margin-top: 10px; 
+}
+.card-metric { flex-grow: 1; min-width: 200px; }
+.card-metric h2 { font-size: 1.2em; color: var(--text-color); font-weight: 500; margin-bottom: 10px; }
+.data-value { font-size: 2.2em; font-weight: 700; margin-top: 5px; }
+.green { color: var(--success-color); }
+.red { color: var(--danger-color); }
+.blue { color: var(--primary-color); }
+
+/* Custom Forms */
+.add-customer-form input { width: calc(50% - 10px); margin-right: 10px; }
+
+
+/* ========================================================= */
+/* 12. 📱 MOBILE RESPONSIVE QUERIES (Max Width 768px) */
+/* ========================================================= */
+@media (max-width: 768px) {
+    main { 
+        padding: 15px; 
+    }
+
+    /* Navigation Stack Fix */
+    nav {
+        flex-direction: column; 
+        align-items: flex-start;
+    }
+    nav a {
+        margin-right: 0;
+        margin-bottom: 8px; 
+        width: 100%; 
+        text-align: left;
+    }
+    nav a[style*="float: right"] { 
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    /* POS Layout Fix: Stack Panels */
+    .pos-layout {
+        grid-template-columns: 1fr; 
+        gap: 15px;
+    }
+
+    /* Product Grid Fix: Make buttons larger/easier to hit */
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+        max-height: 50vh;
+    }
+    
+    /* Inventory Tools Bar Wrap Fix */
+    .tools-bar {
+        gap: 8px; 
+        padding: 10px;
+    }
+    .tools-bar input[type="text"] {
+        max-width: 100%; 
+    }
+
+    /* Custom Forms (New Customer / Products) */
+    .add-customer-form input {
+        width: 100%; 
+        margin-right: 0;
+    }
+    
+    /* Analysis Cards Stack */
+    .analysis-card-group {
+        flex-direction: column; 
+        gap: 15px;
+    }
+    .card-metric {
+        min-width: 100%;
+    }
+}

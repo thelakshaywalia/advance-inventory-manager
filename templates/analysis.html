@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Business Analysis{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1>📊 Business Analysis Dashboard</h1>
+    </div>
+
+    <section class="analysis-card-group">
+        <div class="card-metric">
+            <h3>Total Revenue (All Sales)</h3>
+            <p class="data-value green">{{ revenue | currency }}</p>
+        </div>
+        <div class="card-metric">
+            <h3>Gross Profit</h3>
+            <p class="data-value {% if profit > 0 %}green{% else %}red{% endif %}">{{ profit | currency }}</p>
+        </div>
+        <div class="card-metric">
+            <h3>Estimated Loss (Outstanding Credit)</h3>
+            <p class="data-value red">{{ loss_estimate | currency }}</p>
+        </div>
+    </section>
+
+    <section class="analysis-card-group" style="margin-top: 20px;">
+        <div class="card-metric">
+            <h2>📦 Total Inventory Cost</h2>
+            <p class="data-value blue">{{ total_inventory_cost | currency }}</p> 
+        </div>
+        <div class="card-metric">
+            <h2>💰 Cash Sales</h2>
+            <p class="data-value">{{ cash_sales | currency }}</p>
+        </div>
+        <div class="card-metric">
+            <h2>💳 Card Sales</h2>
+            <p class="data-value blue">{{ card_sales | currency }}</p>
+        </div>
+        <div class="card-metric">
+            <h2>📜 Outstanding Debt</h2>
+            <p class="data-value red">{{ total_credit_due | currency }}</p>
+        </div>
+    </section>
+    
+    <section class="analysis-section" style="margin-top: 30px;">
+        <h2>💀 Dead Stock Candidates (High Stock, Low/No Sales)</h2>
+        {% if dead_stock %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Current Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in dead_stock %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.stock }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No dead stock candidates identified.</p>
+        {% endif %}
+    </section>
+{% endblock %}
